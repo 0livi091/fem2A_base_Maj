@@ -12,6 +12,11 @@ Calculer à la main l'intégrale d'une fonction simple sur le triangle de
 référence (ex : $f(\xi,\eta)=1$) et comparer à la valeur retournée par les
 différentes quadratures.
 
+l'intégration donne 1/2, cad l'air du triangle
+--> il faut vérifier que la somme des poids w est égale à 1/2
+= appeler quadrature, trouver les poids et vérifier que leur somme fait 1/2
+
+
 ### Résultats sur le triangle 4 de *square.mesh*
 
 ```
