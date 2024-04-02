@@ -10,6 +10,11 @@ Il s'agit du programme principal utilisé pour lancer les [tests](tests.md)
 et les [simulations](simus.md). Lisez-le pour comprendre son fonctionnement
 et pour savoir le modifier à chaque nouveau test ou simulation.
 
+hérité du C : 
+argc = argument count = nombre d'arguments (ce qu'il y a entre parenthèses quand on lance le code quoi)
+argv = pointeur de taille argc (argv[1] 1er argument, argv[2] 2e argument....) pour récupérer les arguments donnés quand on appelle la fonction
+ça se fait automatiquement quand on exécute le main
+
 - src/tests.h :
 
 Contient la définition des différents tests qui seront appelés dans main.cpp.
