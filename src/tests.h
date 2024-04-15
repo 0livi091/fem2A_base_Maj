@@ -50,6 +50,59 @@ namespace FEM2A {
             mesh.save("data/geothermie_4.mesh");
             return true;
         }
+        
+       bool test_quadrature(int order)
+       {
+            Quadrature quad = Quadrature::get_quadrature(order);
+            std :: cout << quad.nb_points() << std ::endl;
+            double sum = 0;
+              for (int i=0; i< quad.nb_points();++i){
+              std::cout << quad.point(i).x << " " // point a été défini comme une structure vertex (dans mesh.h)
+              << quad.point(i).y << std::endl;
+              std::cout << quad.weight(i) << std::endl;
+              sum = sum + quad.weight(i);
+              }
+            std::cout << sum << std::endl;
+            return true;
+        }
+        
+       bool test_elementmapping(){
+       
+            std :: cout << "Coordonnées des éléments : " << std :: endl;
+       
+            Mesh mesh;
+            mesh.load("data/square.mesh");
+       
+            ElementMapping e4(mesh, true, 4);
+            ElementMapping e42(mesh, false, 4);
+            
+            return true;
+            
+       }
+       
+       bool test_elementtransform(){
+       
+            std :: cout << "Mapping : \n" ;
+            
+            Mesh mesh;
+            mesh.load("data/square.mesh");
+            
+            //ElementMapping e4(mesh, true, 4);
+            ElementMapping e42(mesh, false, 4);
+            
+            vertex vr ;
+            vr.x = 0.2;
+            vr.y = 0.4;
+            
+            //vertex vr_new = e4.transform(vr);
+            vertex vr_new2 = e42.transform(vr);
+            
+            //std:: cout << "x = " << vr_new.x << " ; y = " << vr_new.y << std :: endl;
+            std:: cout << "x = " << vr_new2.x << " ; y = " << vr_new2.y << std :: endl;
+            
+            return true;
+       }
+       
 
     }
 }

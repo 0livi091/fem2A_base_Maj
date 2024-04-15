@@ -132,17 +132,41 @@ namespace FEM2A {
     ElementMapping::ElementMapping( const Mesh& M, bool border, int i )
         : border_( border )
     {
-        std::cout << "[ElementMapping] constructor for element " << i << " ";
-        if ( border ) std::cout << "(border)";
-        std::cout << '\n';
-        // TODO
+    // border true si on est sur un bord = un segment avec 2 coordonnees = 2vertices
+    // border false = triangle, 3 coordonnees, 3 vertices
+    // v est local, i est global (numero du triangle)
+    	if (border){
+    		for (int v=0; v<2 ; ++v) vertices_.push_back(M.get_edge_vertex(i,v));
+    		//for (int v=0; v<2 ; ++v) std::cout << vertices_[v].x << " "<< vertices_[v].y;
+    	}
+    	else {
+    		for (int v=0; v<3; ++v) vertices_.push_back(M.get_triangle_vertex(i,v));
+    		//for (int v=0; v<3; ++v) std::cout << vertices_[v].x << " "<< vertices_[v].y << std::endl;
+    	} 
     }
 
     vertex ElementMapping::transform( vertex x_r ) const
     {
-        std::cout << "[ElementMapping] transform reference to world space" << '\n';
-        // TODO
-        vertex r ;
+    
+    	double xi = x_r.x;
+    	double eta = x_r.y;
+    	double sum = 0;
+    	vertex r ;
+    	
+    	if (border_){
+    	
+    		r.x = vertices_[0].x*(1-xi) + vertices_[1].x*xi;
+    		r.y = vertices_[0].y*(1-xi) + vertices_[1].y*xi;
+    	}
+    	else {
+    	
+    		r.x = vertices_[0].x*(1-xi-eta) + vertices_[1].x*xi + vertices_[2].x*eta;
+    		r.y = vertices_[0].y*(1-xi-eta) + vertices_[1].y*xi + vertices_[2].y*eta;
+    	}
+    	
+    	
+        //std::cout << "[ElementMapping] transform reference to world space" << '\n';
+
         return r ;
     }
 
@@ -154,7 +178,7 @@ namespace FEM2A {
         return J ;
     }
 
-    double ElementMapping::jacobian( vertex x_r ) const
+    double ElementMapping::jacobian( vertex x_r ) const 
     {
         std::cout << "[ElementMapping] compute jacobian determinant" << '\n';
         // TODO
