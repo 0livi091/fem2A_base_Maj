@@ -103,6 +103,28 @@ namespace FEM2A {
             return true;
        }
        
+       bool test_jacobian(){
+       	    
+       	    std :: cout << "Matrice jacobienne : \n" ; 
+       	                Mesh mesh;
+            mesh.load("data/square.mesh");
+            
+            ElementMapping e42(mesh, false, 4);
+            
+            vertex vr ;
+            vr.x = 0.2;
+            vr.y = 0.4;
+            
+            DenseMatrix jacob = e42.jacobian_matrix(vr);
+            std :: cout << jacob.get(0,0) << " " << jacob.get(0,1) << "\n" << jacob.get(1,0) << " " << jacob.get(1,1) << std::endl ;
+            
+            double det = e42.jacobian(vr);
+            
+            std :: cout << "determinant : " << det << std :: endl;
+            
+            return true;
+       }
+       
 
     }
 }
