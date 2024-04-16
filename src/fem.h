@@ -181,6 +181,7 @@ namespace FEM2A {
         const DenseMatrix& Ke,
         SparseMatrix& K ) ;
 
+
     /**
      * \brief Computes the elementary vector Fe associated to a
      *        triangle defined by its ElementMapping due to the

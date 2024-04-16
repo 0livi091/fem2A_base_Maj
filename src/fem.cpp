@@ -172,7 +172,7 @@ namespace FEM2A {
 
     DenseMatrix ElementMapping::jacobian_matrix( vertex x_r ) const
     {
-        std::cout << "[ElementMapping] compute jacobian matrix" << '\n';
+        //std::cout << "[ElementMapping] compute jacobian matrix" << '\n';
         DenseMatrix J ;
         
         double xi = x_r.x;
@@ -197,7 +197,7 @@ namespace FEM2A {
 
     double ElementMapping::jacobian( vertex x_r ) const 
     {
-        std::cout << "[ElementMapping] compute jacobian determinant" << '\n';
+        //std::cout << "[ElementMapping] compute jacobian determinant" << '\n';
         DenseMatrix jacob = jacobian_matrix(x_r);
         double det = 0;
         if(border_){
@@ -215,7 +215,7 @@ namespace FEM2A {
     ShapeFunctions::ShapeFunctions( int dim, int order )
         : dim_( dim ), order_( order )
     {
-        std::cout << "[ShapeFunctions] constructor in dimension " << dim << '\n';
+        //std::cout << "[ShapeFunctions] constructor in dimension " << dim << '\n';
         bool SF_construct = true;
         if( dim!= 1 && dim!= 2){
         	std::cout << "ShapeFunctions are only implemented in 1D or 2D. \n";
@@ -231,14 +231,14 @@ namespace FEM2A {
 
     int ShapeFunctions::nb_functions() const
     {
-        std::cout << "[ShapeFunctions] number of functions" << '\n';
+        //std::cout << "[ShapeFunctions] number of functions" << '\n';
         if (dim_ == 1) return 2 ;
         return 3;
     }
 
     double ShapeFunctions::evaluate( int i, vertex x_r ) const
     {
-        std::cout << "[ShapeFunctions] evaluate shape function " << i << '\n';
+        //std::cout << "[ShapeFunctions] evaluate shape function " << i << '\n';
         if (dim_ == 1){
         	switch (i){
         		case (0) : 
@@ -262,16 +262,18 @@ namespace FEM2A {
 
     vec2 ShapeFunctions::evaluate_grad( int i, vertex x_r ) const
     {
-        std::cout << "[ShapeFunctions] evaluate gradient shape function " << i << '\n';
+        //std::cout << "[ShapeFunctions] evaluate gradient shape function " << i << '\n';
         vec2 g ;
         if (dim_ == 1){
         	switch (i){
         		case (0) : 
         			g.x = -1;
         			g.y = 0;
+        			break;
         		case (1) : 
         			g.x = 1;
         			g.y = 0;
+        			break;
         	}
         }
         else {
@@ -279,12 +281,15 @@ namespace FEM2A {
         		case (0) :
         			g.x = -1;
         			g.y = -1;
+        			break;
         		case (1) :
         			g.x = 1;
         			g.y = 0;
+        			break;
         		case (2) : 
         			g.x = 0;
         			g.y = 1;
+        			break;
         	}	
         }
         return g ;
@@ -301,26 +306,24 @@ namespace FEM2A {
         DenseMatrix& Ke )
     {
         std::cout << "compute elementary matrix" << '\n';
-        for(int i=0; i<4; ++i){
+        for(int i=0; i<3; ++i){
         
-        	for(int j=0; j<4; ++j){
+        	for(int j=0; j<3; ++j){
         	
         		double sum = 0;
         		
         		for(int pt =0; pt<quadrature.nb_points(); ++pt){
         		
         			vertex point = quadrature.point(pt);
-        			vertex x_r;
-        			x_r.x = point.x;
-        			x_r.y = point.y;
-        			double s1 = quadrature.weight(pt)*(*coefficient)(x_r);
-        			DenseMatrix jacob = elt_mapping.jacobian_matrix(x_r);
-        			vec2 gradphi_i = reference_functions.evaluate_grad(i, x_r);
-        			vec2 gradphi_j = reference_functions.evaluate_grad(j, x_r);
+        			double s1 = quadrature.weight(pt)*(*coefficient)(elt_mapping.transform(point));
+        			DenseMatrix jacob = elt_mapping.jacobian_matrix(point);
+        			vec2 gradphi_i = reference_functions.evaluate_grad(i, point);
+        			vec2 gradphi_j = reference_functions.evaluate_grad(j, point);
         			vertex vec1 = ((jacob.invert_2x2()).transpose()).mult_2x2_2(gradphi_i);
         			vertex vec12 = ((jacob.invert_2x2()).transpose()).mult_2x2_2(gradphi_j);
         			double pdtscal = dot(vec1,vec12);
-        			sum = sum + (s1*pdtscal*elt_mapping.jacobian(x_r));
+        			double detj = jacob.det_2x2();
+        			sum = sum + (s1*pdtscal*detj);
         		}
         		
         		Ke.set(i, j, sum);
@@ -340,7 +343,15 @@ namespace FEM2A {
         SparseMatrix& K )
     {
         std::cout << "Ke -> K" << '\n';
-        // TODO
+                
+        for(int i=0; i<Ke.height(); ++i){
+        	for(int j=0; j<Ke.width(); ++j){
+        		int i_global = M.get_triangle_vertex_index(t, i);
+        		int j_global = M.get_triangle_vertex_index(t, j);
+        		K.add(i_global, j_global, Ke.get(i, j));
+        	}
+
+        }
     }
 
     void assemble_elementary_vector(

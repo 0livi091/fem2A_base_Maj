@@ -142,14 +142,18 @@ namespace FEM2A {
             Quadrature quad = Quadrature::get_quadrature(2);
             DenseMatrix Ke;
             Ke.set_size(3,3);
-            vertex v;
-            v.x = 0.2;
-            v.y = 0.4;
+            //vertex v;
+            //v.x = 0.2;
+            //v.y = 0.4;
             
             assemble_elementary_matrix(e42, fonctions, quad, unit_fct, Ke);
             
-            std :: cout << Ke.get(0,0) << " " << Ke.get(0,1) << " " << Ke.get(0,2) << "\n" << Ke.get(1,0) << " " << Ke.get(1,1) << " " << Ke.get(1,2) << "\n" << Ke.get(2,0) << " " << Ke.get(2,1) << " " << Ke.get(2,2) << std::endl ;
+            std :: cout << "Matrice Ke : \n " << Ke.get(0,0) << " " << Ke.get(0,1) << " " << Ke.get(0,2) << "\n" << Ke.get(1,0) << " " << Ke.get(1,1) << " " << Ke.get(1,2) << "\n" << Ke.get(2,0) << " " << Ke.get(2,1) << " " << Ke.get(2,2) << std::endl ;
        		
+       	    
+       	    SparseMatrix K_glob(mesh.nb_vertices());
+       	    local_to_global_matrix(mesh, 4, Ke, K_glob);
+       	    K_glob.print();
        	    
        	    return true;
        		
