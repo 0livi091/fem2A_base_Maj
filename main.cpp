@@ -34,7 +34,8 @@ void run_tests()
     const bool t_quad = false;
     const bool t_element = false;
     const bool t_transform = false;
-    const bool t_jacob = true;
+    const bool t_jacob = false;
+    const bool t_ke = true;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
@@ -43,6 +44,7 @@ void run_tests()
     if (t_element) Tests::test_elementmapping();
     if (t_transform) Tests::test_elementtransform();
     if (t_jacob) Tests::test_jacobian();
+    if (t_ke) Tests::test_elementarymatrix();
 }
 
 void run_simu()

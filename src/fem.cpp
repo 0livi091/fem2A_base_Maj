@@ -266,23 +266,23 @@ namespace FEM2A {
         vec2 g ;
         if (dim_ == 1){
         	switch (i){
-        		case 0 : 
+        		case (0) : 
         			g.x = -1;
         			g.y = 0;
-        		case 1 : 
+        		case (1) : 
         			g.x = 1;
         			g.y = 0;
         	}
         }
         else {
         	switch (i){
-        		case 0 :
+        		case (0) :
         			g.x = -1;
         			g.y = -1;
-        		case 1 :
+        		case (1) :
         			g.x = 1;
         			g.y = 0;
-        		case 2 : 
+        		case (2) : 
         			g.x = 0;
         			g.y = 1;
         	}	
@@ -301,7 +301,35 @@ namespace FEM2A {
         DenseMatrix& Ke )
     {
         std::cout << "compute elementary matrix" << '\n';
-        // TODO
+        for(int i=0; i<4; ++i){
+        
+        	for(int j=0; j<4; ++j){
+        	
+        		double sum = 0;
+        		
+        		for(int pt =0; pt<quadrature.nb_points(); ++pt){
+        		
+        			vertex point = quadrature.point(pt);
+        			vertex x_r;
+        			x_r.x = point.x;
+        			x_r.y = point.y;
+        			double s1 = quadrature.weight(pt)*(*coefficient)(x_r);
+        			DenseMatrix jacob = elt_mapping.jacobian_matrix(x_r);
+        			vec2 gradphi_i = reference_functions.evaluate_grad(i, x_r);
+        			vec2 gradphi_j = reference_functions.evaluate_grad(j, x_r);
+        			vertex vec1 = ((jacob.invert_2x2()).transpose()).mult_2x2_2(gradphi_i);
+        			vertex vec12 = ((jacob.invert_2x2()).transpose()).mult_2x2_2(gradphi_j);
+        			double pdtscal = dot(vec1,vec12);
+        			sum = sum + (s1*pdtscal*elt_mapping.jacobian(x_r));
+        		}
+        		
+        		Ke.set(i, j, sum);
+        	}
+        }
+        
+        
+        
+        
         
     }
 

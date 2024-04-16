@@ -106,7 +106,7 @@ namespace FEM2A {
        bool test_jacobian(){
        	    
        	    std :: cout << "Matrice jacobienne : \n" ; 
-       	                Mesh mesh;
+       	    Mesh mesh;
             mesh.load("data/square.mesh");
             
             ElementMapping e42(mesh, false, 4);
@@ -125,6 +125,36 @@ namespace FEM2A {
             return true;
        }
        
+         
+        double unit_fct( vertex v )
+        {
+            return 1.;
+        }
+
+       
+       bool test_elementarymatrix(){
+       		
+            std :: cout << "Elementary matrix : \n" ; 
+       	    Mesh mesh;
+            mesh.load("data/square.mesh");
+            ElementMapping e42(mesh, false, 4);
+            ShapeFunctions fonctions(2,1);
+            Quadrature quad = Quadrature::get_quadrature(2);
+            DenseMatrix Ke;
+            Ke.set_size(3,3);
+            vertex v;
+            v.x = 0.2;
+            v.y = 0.4;
+            
+            assemble_elementary_matrix(e42, fonctions, quad, unit_fct, Ke);
+            
+            std :: cout << Ke.get(0,0) << " " << Ke.get(0,1) << " " << Ke.get(0,2) << "\n" << Ke.get(1,0) << " " << Ke.get(1,1) << " " << Ke.get(1,2) << "\n" << Ke.get(2,0) << " " << Ke.get(2,1) << " " << Ke.get(2,2) << std::endl ;
+       		
+       	    
+       	    return true;
+       		
+       		
+       }
 
     }
 }
