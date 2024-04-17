@@ -305,7 +305,7 @@ namespace FEM2A {
         double (*coefficient)(vertex),
         DenseMatrix& Ke )
     {
-        std::cout << "compute elementary matrix" << '\n';
+        //std::cout << "compute elementary matrix" << '\n';
         for(int i=0; i<3; ++i){
         
         	for(int j=0; j<3; ++j){
@@ -342,7 +342,7 @@ namespace FEM2A {
         const DenseMatrix& Ke,
         SparseMatrix& K )
     {
-        std::cout << "Ke -> K" << '\n';
+        //std::cout << "Ke -> K" << '\n';
                 
         for(int i=0; i<Ke.height(); ++i){
         	for(int j=0; j<Ke.width(); ++j){
@@ -394,8 +394,24 @@ namespace FEM2A {
         SparseMatrix& K,
         std::vector< double >& F )
     {
-        std::cout << "apply dirichlet boundary conditions" << '\n';
-        // TODO
+        //std::cout << "apply dirichlet boundary conditions" << '\n';
+        
+        std::vector<bool> processed_vertices(values.size(), false);
+        double penalty_coefficient = 10000;
+        for(int edge=0; edge<M.nb_edges(); edge++){
+        	int edge_attribute = M.get_edge_attribute(edge);
+        	if(attribute_is_dirichlet[edge_attribute]) {
+        		for( int v=0; v<2; v++){
+        			int vertex_index = M.get_edge_vertex_index(edge, v);
+        			if( !processed_vertices[vertex_index]){
+        				processed_vertices[vertex_index] = true;
+        				K.add(vertex_index, vertex_index, penalty_coefficient);
+        				F[vertex_index] += penalty_coefficient*values[vertex_index];
+        			}
+        		}
+        	}
+        }
+        
     }
 
     void solve_poisson_problem(
