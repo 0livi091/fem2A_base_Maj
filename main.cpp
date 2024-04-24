@@ -35,7 +35,8 @@ void run_tests()
     const bool t_element = false;
     const bool t_transform = false;
     const bool t_jacob = false;
-    const bool t_ke = true;
+    const bool t_ke = false;
+    const bool t_Fe = true;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
@@ -45,18 +46,23 @@ void run_tests()
     if (t_transform) Tests::test_elementtransform();
     if (t_jacob) Tests::test_jacobian();
     if (t_ke) Tests::test_elementarymatrix();
+    if (t_Fe) Tests::test_elementaryvector();
 }
 
 void run_simu()
 {
 
-    const bool simu_pure_dirichlet = true;
+    const bool simu_pure_dirichlet = false;
+    const bool simu_terme_source = true;
 
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
 
     if( simu_pure_dirichlet ) {
-        Simu::pure_dirichlet_pb("data/square.mesh", verbose);
+        Simu::pure_dirichlet_pb("data/square_fine.mesh", verbose);
+    }
+    if( simu_terme_source ) {
+        Simu::dirichlet_terme_source_pb("data/square.mesh", verbose);
     }
 }
 

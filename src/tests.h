@@ -159,6 +159,29 @@ namespace FEM2A {
        		
        		
        }
+       
+       bool test_elementaryvector(){
+       		
+       	    std :: cout << "Elementary vector : \n" ; 
+       	    Mesh mesh;
+            mesh.load("data/square.mesh");
+            ElementMapping e42(mesh, false, 4);
+            ShapeFunctions fonctions(2,1);
+            Quadrature quad = Quadrature::get_quadrature(2);
+            std::vector< double > Fe(fonctions.nb_functions(), 0.0);
+            
+            assemble_elementary_vector(e42, fonctions, quad, unit_fct, Fe);
+            std :: cout << "Vecteur Fe : \n" << Fe[0] << "\n" << Fe[1] << "\n" << Fe[2] << "\n";
+            
+            std::vector< double > F(mesh.nb_vertices(),0.0);
+            local_to_global_vector(mesh, false, 4, Fe, F);
+            
+            std :: cout << F[20] << " ; " << F[49] << " ; " << F[65] << "\n" ; 
+            
+            return true; 
+            
+            
+       }
 
     }
 }

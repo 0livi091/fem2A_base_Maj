@@ -361,8 +361,23 @@ namespace FEM2A {
         double (*source)(vertex),
         std::vector< double >& Fe )
     {
-        std::cout << "compute elementary vector (source term)" << '\n';
-        // TODO
+        for(int i=0; i< reference_functions.nb_functions(); ++i){
+        	
+        		double pdt = 0;
+        		
+        		for(int pt =0; pt<quadrature.nb_points(); ++pt){
+        		
+        			vertex point = quadrature.point(pt);
+        			double w = quadrature.weight(pt);
+        			DenseMatrix jacob = elt_mapping.jacobian_matrix(point);
+        			double phi_i = reference_functions.evaluate(i, point);
+        			double detj = jacob.det_2x2();
+        			pdt = pdt + w*phi_i*(*source)(elt_mapping.transform(point))*detj;
+        		}
+        		
+        		Fe[i] = pdt;
+        }
+        
     }
 
     void assemble_elementary_neumann_vector(
@@ -383,8 +398,20 @@ namespace FEM2A {
         std::vector< double >& Fe,
         std::vector< double >& F )
     {
-        std::cout << "Fe -> F" << '\n';
-        // TODO
+        if (border){
+        	for(int ind=0; ind<Fe.size(); ++ind){
+        		int i_global = M.get_edge_vertex_index(i, ind);
+        		F[i_global] += Fe[ind];
+       		}
+        }
+        else{
+        	for(int ind=0; ind<Fe.size(); ++ind){
+        		int i_global = M.get_triangle_vertex_index(i, ind);
+        		F[i_global] += Fe[ind];
+       		}
+
+
+        }
     }
 
     void apply_dirichlet_boundary_conditions(
