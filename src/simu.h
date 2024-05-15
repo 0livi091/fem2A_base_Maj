@@ -102,12 +102,9 @@ namespace FEM2A {
             std::vector< double > Fe(fonctions.nb_functions(), 0.0);
             std::vector<double> F_glob(mesh.nb_vertices(), 0.);
             
-            mesh.set_attribute(unit_fct, 1, true);
+            mesh.set_attribute(unit_fct, 2, true);
             
-            std::vector <bool> attribute_is_dirichlet(2, false);
-            attribute_is_dirichlet[1]=true;
-            
-            
+            std::vector <bool> attribute_is_dirichlet = {false, false, true};
             std::vector<double> values(mesh.nb_vertices(), 0.0);
             
             for(int t=0 ;t<mesh.nb_triangles() ; t++){
@@ -127,11 +124,12 @@ namespace FEM2A {
        	    }
        	    
        	    apply_dirichlet_boundary_conditions(mesh, attribute_is_dirichlet,values,K_glob,F_glob);
+       	    
        	    std::vector<double> u(mesh.nb_vertices());
        	    
        	    solve(K_glob, F_glob, u);
        	    
-       	    std::string export_name = "dirichlet_sourceterm_square";
+       	    std::string export_name = "dirichlet_sourceterm_square_fine";
        	    mesh.save(export_name+".mesh");
        	    save_solution(u, export_name+".bb");
         }
